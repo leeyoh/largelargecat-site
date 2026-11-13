@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>largelargecat — a cat so large it needs two larges</title>
+<meta name="description" content="Welcome to largelargecat.com, home of a cat so large it needs two larges.">
+<meta name="theme-color" content="#ffe9b8">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐈</text></svg>">
+<style>
+  :root {
+    --bg: #ffe9b8;
+    --bg-2: #ffd98a;
+    --ink: #2b1a0c;
+    --label: #fffaf0;
+    --fur: #f39a3d;
+    --fur-dark: #d9772a;
+    --cream: #ffe7c2;
+    --pink: #f48c8c;
+    --accent: #2b1a0c;
+    --accent-ink: #fffaf0;
+    --s: 1;
+    --px: 0px;
+    --py: 0px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1930;
+      --bg-2: #2a2547;
+      --ink: #fff4dd;
+      --label: #151226;
+      --accent: #ffd98a;
+      --accent-ink: #2b1a0c;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    overflow: hidden;
+    background: radial-gradient(120% 80% at 50% 0%, var(--bg) 0%, var(--bg-2) 100%);
+    color: var(--ink);
+    font-family: ui-rounded, "SF Pro Rounded", "Nunito", "Trebuchet MS", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    touch-action: manipulation;
+  }
+
+  header {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(8px, 1.6vh, 16px);
+    padding: clamp(18px, 5vh, 56px) 16px 0;
+    text-align: center;
+    pointer-events: none;
+  }
+  header > * { pointer-events: auto; }
+  .sticker {
+    background: var(--label);
+    border: 3px solid var(--ink);
+    border-radius: 999px;
+    box-shadow: 0 5px 0 var(--ink);
+  }
+  .eyebrow {
+    margin: 0;
+    padding: 4px 16px;
+    font-size: clamp(0.8rem, 1.6vw, 1rem);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    transform: rotate(-2deg);
+  }
+  h1 {
+    margin: 0;
+    padding: 0.06em 0.42em 0.12em;
+    font-size: clamp(2.3rem, 10vw, 6.5rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    border-radius: 0.35em;
+    transform: rotate(1deg);
+  }
+  h1 span { color: var(--fur-dark); }
+  .line {
+    margin: 0;
+    max-width: 34ch;
+    padding: 8px 20px;
+    font-size: clamp(1rem, 2.3vw, 1.3rem);
+    font-weight: 700;
+    line-height: 1.3;
+    border-radius: 22px;
+    transform: rotate(-1deg);
+    text-wrap: balance;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+  .size {
+    margin: 0;
+    padding: 7px 16px;
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+  .size b { font-weight: 900; }
+  button.grow {
+    appearance: none;
+    cursor: pointer;
+    padding: 9px 20px;
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 900;
+    color: var(--accent-ink);
+    background: var(--accent);
+    border: 3px solid var(--ink);
+    border-radius: 999px;
+    box-shadow: 0 5px 0 var(--ink);
+    transition: transform 0.08s, box-shadow 0.08s;
+  }
+  @media (prefers-color-scheme: dark) {
+    button.grow { box-shadow: 0 5px 0 #000; border-color: #000; }
+  }
+  button.grow:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--ink); }
+  button.grow:focus-visible, .cat:focus-visible { outline: 4px solid #5aa9ff; outline-offset: 3px; }
+
+  .stage {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    pointer-events: none;
+  }
+  .cat {
+    appearance: none;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    pointer-events: auto;
+    width: min(118vw, 92vh, 980px);
+    margin-bottom: max(-30vh, -300px);
+    transform: scale(var(--s));
+    transform-origin: 50% 40%;
+    transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cat svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+  .pupils { transform: translate(var(--px), var(--py)); transition: transform 0.12s ease-out; }
+  .lid { transform-box: fill-box; transform-origin: 50% 0%; transform: scaleY(0); animation: blink 5.5s infinite; }
+  .tail { transform-box: fill-box; transform-origin: 8% 92%; animation: wag 3.2s ease-in-out infinite; }
+  .ear-l { transform-box: fill-box; transform-origin: 70% 100%; animation: twitch 7s infinite; }
+  .breath { transform-box: fill-box; transform-origin: 50% 100%; animation: breathe 4.5s ease-in-out infinite; }
+
+  @keyframes blink { 0%, 93%, 100% { transform: scaleY(0); } 96% { transform: scaleY(1); } }
+  @keyframes wag { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(9deg); } }
+  @keyframes twitch { 0%, 88%, 100% { transform: rotate(0); } 91% { transform: rotate(-9deg); } 94% { transform: rotate(3deg); } }
+  @keyframes breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.012, 1.02); } }
+
+  footer {
+    position: fixed;
+    z-index: 2;
+    left: 0; right: 0; bottom: 12px;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+  }
+  footer p { margin: 0; padding: 4px 14px; font-size: 0.78rem; font-weight: 700; box-shadow: 0 3px 0 var(--ink); border-width: 2px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lid, .tail, .ear-l, .breath { animation: none; }
+    .cat, .pupils { transition: none; }
+  }
+</style>
+</head>
+<body>
+  <header>
+    <p class="eyebrow sticker">Welcome to</p>
+    <h1 class="sticker">large<span>large</span>cat</h1>
+    <p class="line sticker" id="line" aria-live="polite">A cat so large it needs two larges.</p>
+    <div class="controls">
+      <p class="size sticker">Current size: <b id="size">large large</b></p>
+      <button class="grow" id="grow" type="button">Make it larger</button>
+    </div>
+  </header>
+
+  <div class="stage">
+    <button class="cat" id="cat" type="button" aria-label="A very large orange cat. Press to make it larger.">
+      <svg viewBox="0 0 800 800" role="img" aria-hidden="true">
+        <g class="tail">
+          <path d="M640 640 C 790 640, 800 470, 720 400" fill="none" stroke="#d9772a" stroke-width="64" stroke-linecap="round"/>
+          <path d="M724 418 C 716 408, 716 404, 720 400" fill="none" stroke="#ffe7c2" stroke-width="64" stroke-linecap="round"/>
+        </g>
+        <g class="breath">
+          <ellipse cx="400" cy="640" rx="335" ry="300" fill="#f39a3d"/>
+          <path d="M150 520 q 40 22 60 62 M650 520 q -40 22 -60 62 M118 610 q 44 14 70 50 M682 610 q -44 14 -70 50" fill="none" stroke="#d9772a" stroke-width="20" stroke-linecap="round"/>
+          <ellipse cx="400" cy="700" rx="205" ry="225" fill="#ffe7c2"/>
+        </g>
+        <g class="ear-l">
+          <path d="M196 214 L 214 34 Q 218 14 236 26 L 356 118 Z" fill="#f39a3d" stroke="#f39a3d" stroke-width="20" stroke-linejoin="round"/>
+          <path d="M232 170 L 240 76 L 306 126 Z" fill="#f48c8c" stroke="#f48c8c" stroke-width="12" stroke-linejoin="round"/>
+        </g>
+        <g>
+          <path d="M604 214 L 586 34 Q 582 14 564 26 L 444 118 Z" fill="#f39a3d" stroke="#f39a3d" stroke-width="20" stroke-linejoin="round"/>
+          <path d="M568 170 L 560 76 L 494 126 Z" fill="#f48c8c" stroke="#f48c8c" stroke-width="12" stroke-linejoin="round"/>
+        </g>
+        <ellipse cx="400" cy="310" rx="240" ry="205" fill="#f39a3d"/>
+        <path d="M400 108 v 62 M348 116 q 6 30 12 52 M452 116 q -6 30 -12 52" fill="none" stroke="#d9772a" stroke-width="20" stroke-linecap="round"/>
+        <path d="M168 300 q 34 4 56 22 M632 300 q -34 4 -56 22 M178 364 q 30 -4 52 6 M622 364 q -30 -4 -52 6" fill="none" stroke="#d9772a" stroke-width="16" stroke-linecap="round"/>
+        <ellipse cx="400" cy="392" rx="118" ry="88" fill="#ffe7c2"/>
+        <circle cx="236" cy="392" r="30" fill="#f48c8c" opacity="0.55"/>
+        <circle cx="564" cy="392" r="30" fill="#f48c8c" opacity="0.55"/>
+
+        <ellipse cx="308" cy="296" rx="54" ry="60" fill="#fffdf6"/>
+        <ellipse cx="492" cy="296" rx="54" ry="60" fill="#fffdf6"/>
+        <g class="pupils">
+          <ellipse cx="308" cy="298" rx="25" ry="38" fill="#2b1a0c"/>
+          <ellipse cx="492" cy="298" rx="25" ry="38" fill="#2b1a0c"/>
+          <circle cx="318" cy="282" r="9" fill="#fffdf6"/>
+          <circle cx="502" cy="282" r="9" fill="#fffdf6"/>
+        </g>
+        <ellipse class="lid" cx="308" cy="296" rx="58" ry="64" fill="#f39a3d"/>
+        <ellipse class="lid" cx="492" cy="296" rx="58" ry="64" fill="#f39a3d"/>
+
+        <path d="M378 356 h 44 q 6 0 2 6 l -20 22 q -4 4 -8 0 l -20 -22 q -4 -6 2 -6 z" fill="#f48c8c"/>
+        <path d="M400 388 q -8 44 -52 34 M400 388 q 8 44 52 34" fill="none" stroke="#2b1a0c" stroke-width="8" stroke-linecap="round"/>
+        <path d="M300 396 L 150 372 M300 416 L 144 426 M500 396 L 650 372 M500 416 L 656 426" fill="none" stroke="#2b1a0c" stroke-width="5" stroke-linecap="round" opacity="0.7"/>
+
+        <ellipse cx="300" cy="756" rx="78" ry="48" fill="#ffe7c2"/>
+        <ellipse cx="500" cy="756" rx="78" ry="48" fill="#ffe7c2"/>
+        <path d="M276 744 v 28 M300 742 v 32 M324 744 v 28 M476 744 v 28 M500 742 v 32 M524 744 v 28" fill="none" stroke="#d9772a" stroke-width="6" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <footer><p class="sticker">est. 2025 · still growing</p></footer>
+
+<script>
+  (function () {
+    var levels = [
+      { scale: 1,    line: 'A cat so large it needs two larges.' },
+      { scale: 1.3,  line: 'Three larges. The cat is unbothered.' },
+      { scale: 1.7,  line: 'Four larges. Nearby furniture is concerned.' },
+      { scale: 2.3,  line: 'Five larges. The cat now has its own postcode.' },
+      { scale: 3.2,  line: 'Six larges. Visible from space. Still napping.' },
+      { scale: 4.6,  line: 'Seven larges. The cat no longer fits on this website.' }
+    ];
+    var root = document.documentElement;
+    var cat = document.getElementById('cat');
+    var grow = document.getElementById('grow');
+    var size = document.getElementById('size');
+    var line = document.getElementById('line');
+    var level = 0;
+
+    function render() {
+      var l = levels[level];
+      root.style.setProperty('--s', l.scale);
+      size.textContent = new Array(level + 3).join('large ').trim();
+      line.textContent = l.line;
+      var last = level === levels.length - 1;
+      grow.textContent = last ? 'Start over' : 'Make it larger';
+      cat.setAttribute('aria-label', last
+        ? 'An impossibly large orange cat. Press to start over.'
+        : 'A very large orange cat. Press to make it larger.');
+    }
+    function step() {
+      level = level === levels.length - 1 ? 0 : level + 1;
+      render();
+    }
+    cat.addEventListener('click', step);
+    grow.addEventListener('click', step);
+
+    window.addEventListener('pointermove', function (e) {
+      var r = cat.getBoundingClientRect();
+      var cx = r.left + r.width / 2;
+      var cy = r.top + r.height * 0.37;
+      var dx = e.clientX - cx, dy = e.clientY - cy;
+      var d = Math.sqrt(dx * dx + dy * dy) || 1;
+      var reach = Math.min(1, d / 260);
+      root.style.setProperty('--px', (dx / d * 20 * reach).toFixed(1) + 'px');
+      root.style.setProperty('--py', (dy / d * 14 * reach).toFixed(1) + 'px');
+    });
+    render();
+  })();
+</script>
+</body>
+</html>
